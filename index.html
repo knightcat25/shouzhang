@@ -1297,7 +1297,11 @@ function exportData(){
   }
   var json=JSON.stringify(data,null,2);
   var filename='手账备份_'+new Date().toISOString().slice(0,10)+'.json';
-  // 方案1: 文件分享（手机）
+  // 方案0: APK原生保存（可选择路径）
+  if(typeof AndroidBridge!=='undefined'&&AndroidBridge.saveFile){
+    AndroidBridge.saveFile(filename,json);return;
+  }
+  // 方案1: 文件分享（手机浏览器）
   if(navigator.share&&navigator.canShare){
     var blob=new Blob([json],{type:'application/json'});
     var file=new File([blob],filename,{type:'application/json'});
