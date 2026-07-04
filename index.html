@@ -1297,24 +1297,35 @@ function exportData(){
   }
   var json=JSON.stringify(data,null,2);
   var filename='手账备份_'+new Date().toISOString().slice(0,10)+'.json';
-  var blob=new Blob([json],{type:'application/json'});
-  // 手机上弹出分享面板，电脑上直接下载
-  if(navigator.share){
+  // 方案1: 文件分享（手机）
+  if(navigator.share&&navigator.canShare){
+    var blob=new Blob([json],{type:'application/json'});
     var file=new File([blob],filename,{type:'application/json'});
-    navigator.share({files:[file],title:'手账备份'}).catch(function(){
-      downloadBlob(blob,filename);
-    });
-  }else{
-    downloadBlob(blob,filename);
+    try{
+      if(navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:'手账备份'}).catch(function(){fallbackDownload(json,filename);});
+        return;
+      }
+    }catch(e){}
+    navigator.share({text:json,title:'手账备份'}).catch(function(){fallbackDownload(json,filename);});
+    return;
   }
+  // 方案2: 复制到剪贴板
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(json).then(function(){
+      alert('数据已复制到剪贴板！在另一设备打开手账后点击"粘贴恢复"。');
+    }).catch(function(){fallbackDownload(json,filename);});
+    return;
+  }
+  // 方案3: data URI 下载
+  fallbackDownload(json,filename);
 }
-function downloadBlob(blob,filename){
+function fallbackDownload(json,filename){
+  var uri='data:application/json;charset=utf-8,'+encodeURIComponent(json);
   var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href=uri;a.download=filename;a.target='_blank';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);},200);
 }
 function importData(){
   var input=document.createElement('input');
