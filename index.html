@@ -22,7 +22,8 @@
         
         /* Header */
         .app-header { text-align: center; margin-bottom: 30px; padding-top: 32px; }
-        .app-header h1 { font-size: 2.2em; color: #7b5544; display: inline-flex; align-items: center; gap: 12px; }
+        .app-header h1 { font-size: 2.2em; color: #7b5544; display: block; margin-bottom: 8px; }
+        .app-header .btn-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; align-items: center; }
 
         /* Calendar Section */
         .calendar-card { background: #fff; border-radius: 24px; padding: 24px; box-shadow: 0 8px 32px rgba(123, 85, 68, 0.1); margin-bottom: 24px; }
@@ -325,6 +326,18 @@
 #bgColorPicker::-webkit-color-swatch-wrapper{padding:0}
 #bgColorPicker::-webkit-color-swatch{border-radius:50%;border:2px solid #e0d5cc}
 
+/* Daily Quote */
+.quote-card{background:#fff;border-radius:24px;padding:32px;box-shadow:0 8px 32px rgba(123,85,68,0.1);margin-bottom:24px;text-align:center}
+.quote-card h2{color:#5c4033;margin-bottom:24px;font-size:1.3em}
+.quote-box{background:linear-gradient(135deg,#fdf6f0,#faf3ec);border-radius:16px;padding:24px;margin-bottom:20px;border-left:4px solid #d4a574}
+.quote-text{font-size:1.2em;color:#5c4033;line-height:1.8;font-style:italic;margin-bottom:8px}
+.quote-author{font-size:.9em;color:#a08070}
+.question-box{background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border-radius:16px;padding:24px;margin-bottom:20px;border-left:4px solid #5b8def}
+.question-label{font-size:.95em;color:#5b8def;font-weight:600;margin-bottom:8px}
+.question-text{font-size:1.1em;color:#3c4a6b;line-height:1.7}
+.quote-refresh-btn{padding:12px 28px;background:#7b5544;color:#fff;border:none;border-radius:14px;font-size:1em;font-weight:600;cursor:pointer;transition:all .25s;font-family:inherit}
+.quote-refresh-btn:hover{background:#5c4033;transform:translateY(-2px)}
+
 /* Print */
 @media print{body{background:#fff;padding:0}.tab-bar,.nav-btn,.today-link,.checkin-btn,.close-detail,.entry-form,.upload-area,.image-delete-btn,.image-edit-btn,.save-entry-btn,.delete-entry,.todo-input-row,.todo-del,.export-btn,.doodle-toolbar,.plan-nav2,.plan-type-toggle,.plan-save-btn,.timer-controls,.timer-mode-toggle,.search-input-row,.search-tag-filter{display:none!important}.tab-content{display:block!important;page-break-before:always}.tab-content:first-of-type{page-break-before:auto}.calendar-card,.detail-panel,.plan-card,.pomodoro-card,.doodle-card,.search-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
 
@@ -408,12 +421,11 @@
 <body>
     <div class="app-container">
         <div class="app-header"><h1>📖 我的手账</h1>
+        <div class="btn-row">
         <input type="color" id="bgColorPicker" title="更换背景色" value="#fdf6f0" onchange="changeBgColor(this.value)">
-        <button class="export-btn" onclick="copyToClipboard()" title="复制到剪贴板">📋 复制数据</button>
-        <button class="export-btn" onclick="pasteFromClipboard()" title="从剪贴板恢复">📌 粘贴恢复</button>
-        <button class="export-btn" onclick="exportPage()" title="打印">🖨️ 打印</button>
         <button class="export-btn" onclick="exportData()" title="导出数据">📤 导出数据</button>
-        <button class="export-btn" onclick="importData()" title="导入数据">📥 导入数据</button></div>
+        <button class="export-btn" onclick="importData()" title="导入数据">📥 导入数据</button>
+        </div></div>
 
         <!-- Tab Bar -->
         <div class="tab-bar">
@@ -422,6 +434,7 @@
             <button class="tab-btn" data-tab="pomodoro">⏱️ 番茄钟</button>
             <button class="tab-btn" data-tab="doodle">🎨 涂鸦</button>
             <button class="tab-btn" data-tab="search">🔍 搜索</button>
+            <button class="tab-btn" data-tab="daily">💡 每日一句</button>
         </div>
 
         <!-- Calendar Tab -->
@@ -635,6 +648,22 @@
             <div class="search-results" id="searchResults">
                 <div class="search-no-results">输入关键词开始搜索...</div>
             </div>
+        </div>
+    </div>
+
+    <!-- ===== Daily Quote Tab ===== -->
+    <div class="tab-content" id="tab-daily">
+        <div class="quote-card">
+            <h2>💡 每日一句</h2>
+            <div class="quote-box" id="quoteBox">
+                <p class="quote-text" id="quoteText">载入中...</p>
+                <p class="quote-author" id="quoteAuthor"></p>
+            </div>
+            <div class="question-box" id="questionBox">
+                <p class="question-label">🤔 今天的问题是：</p>
+                <p class="question-text" id="questionText">载入中...</p>
+            </div>
+            <button class="quote-refresh-btn" onclick="refreshQuote()">🔄 换一句</button>
         </div>
     </div>
 
@@ -1256,6 +1285,72 @@ function doSearch(){
 function navigateToDate(dateStr){switchTab('calendar');const d=parseDate(dateStr);currentYear=d.getFullYear();currentMonth=d.getMonth();renderCalendar();selectDate(dateStr);}
 
 // ==================== Export ====================
+// ===== 每日一句 =====
+var quotes=[
+  ['The only way to do great work is to love what you do.','Steve Jobs'],
+  ['Stay hungry, stay foolish.','Steve Jobs'],
+  ['千里之行，始于足下。','老子'],
+  ['学而不思则罔，思而不学则殆。','孔子'],
+  ['知之为知之，不知为不知，是知也。','孔子'],
+  ['天行健，君子以自强不息。','《周易》'],
+  ['The future belongs to those who believe in the beauty of their dreams.','Eleanor Roosevelt'],
+  ['生活不止眼前的苟且，还有诗和远方。','高晓松'],
+  ['世上无难事，只要肯登攀。','毛泽东'],
+  ['活着就是为了改变世界。','乔布斯'],
+  ['知识就是力量。','培根'],
+  ['读万卷书，行万里路。','董其昌'],
+  ['三人行，必有我师焉。','孔子'],
+  ['不积跬步，无以至千里。','荀子'],
+  ['己所不欲，勿施于人。','孔子'],
+];
+var questions=[
+  '太阳系中哪颗行星被称为"红色星球"？',
+  '世界上最长的河流是哪一条？',
+  '"相对论"是哪位科学家提出的？',
+  '地球上最深的海沟叫什么名字？',
+  '中国的四大发明是什么？',
+  'DNA的双螺旋结构是哪两位科学家发现的？',
+  '世界上最古老的文明是哪个？',
+  '珠穆朗玛峰的海拔高度是多少米？',
+  '"文艺复兴"起源于哪个国家？',
+  '人体最大的器官是什么？',
+  '光速大约是多少公里每秒？',
+  '恐龙灭绝发生在多少年前？',
+  '地球上最大的热带雨林叫什么？',
+  '水的化学式是什么？',
+  '谁被称为"交响乐之父"？',
+  '中国的首都在哪个城市？',
+  '"蒙娜丽莎"是谁的作品？',
+  '地球绕太阳公转一周大约需要多少天？',
+  '人类第一次登上月球是在哪一年？',
+  '太平洋有多大面积？',
+  '"四大名著"是哪四本书？',
+  'iPhone是哪家公司发明的？',
+  '世界上最硬的天然物质是什么？',
+  '中国有多少个省级行政区？',
+  '雷电是什么现象？',
+  '人类有多少对染色体？',
+  '最大的哺乳动物是什么？',
+  '"量子力学"中著名的思想实验是薛定谔的什么动物？',
+  '海王星距离太阳大约多少亿公里？',
+  '谁统一了德国，成为"铁血宰相"？',
+];
+
+function refreshQuote(){
+  var q=quotes[Math.floor(Math.random()*quotes.length)];
+  document.getElementById('quoteText').textContent='"' +q[0]+'"';
+  document.getElementById('quoteAuthor').textContent='—— '+q[1];
+  var qu=questions[Math.floor(Math.random()*questions.length)];
+  document.getElementById('questionText').textContent=qu;
+  localStorage.setItem('daily_quote_idx',Math.floor(Math.random()*99999));
+}
+function initDailyQuote(){
+  refreshQuote();
+  var today=formatDate(new Date());
+  var saved=localStorage.getItem('daily_date');
+  if(saved!==today){refreshQuote();localStorage.setItem('daily_date',today);}
+}
+
 function exportPage(){window.print();}
 
 // ===== 数据同步（导出/导入/剪贴板） =====
@@ -1636,6 +1731,7 @@ init = function(){
   initTagInput();
   loadTimerSessions();
   loadDurations();
+  initDailyQuote();
 
   // Mood/Weather button events
   document.querySelectorAll('#moodSelector .emoji-btn').forEach(b=>{
