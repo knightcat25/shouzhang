@@ -21,7 +21,7 @@
         .app-container { max-width: 900px; margin: 0 auto; }
         
         /* Header */
-        .app-header { text-align: center; margin-bottom: 30px; padding-top: 20px; }
+        .app-header { text-align: center; margin-bottom: 30px; padding-top: 32px; }
         .app-header h1 { font-size: 2.2em; color: #7b5544; display: inline-flex; align-items: center; gap: 12px; }
 
         /* Calendar Section */
@@ -470,6 +470,7 @@
                         <button class="emoji-btn" data-mood="💰" title="金钱">💰</button>
                         <button class="emoji-btn" data-mood="🏋️" title="锻炼">🏋️</button>
                         <button class="emoji-btn" data-mood="⭐" title="星星">⭐</button>
+                        <button class="emoji-btn" data-mood="🏥" title="医院">🏥</button>
                     </div>
                 </div>
                 <div class="weather-section">
@@ -1513,7 +1514,23 @@ function enhanceEntryImages(){
     if(bodyEl)bodyEl.appendChild(imgArea);
   });
 }
+function addImagesFromNative(entryId,images){
+  if(!images||images.length===0)return;
+  var entries=getAllEntries();
+  var arr=entries[currentSelectedDate];
+  if(!arr)return;
+  var entry=arr.find(function(en){return String(en.id)===String(entryId);});
+  if(!entry)return;
+  if(!entry.images)entry.images=[];
+  var remaining=10-entry.images.length;
+  images.slice(0,remaining).forEach(function(b64){
+    entry.images.push({id:Date.now()+Math.random(),data:b64,createdAt:new Date().toISOString()});
+  });
+  saveAllEntries(entries);
+  enhanceEntryImages();
+}
 function addEntryImages(entryId){
+  if(typeof AndroidBridge!=='undefined'&&AndroidBridge.pickImages){AndroidBridge.pickImages(entryId);return;}
   var input=document.createElement('input');
   input.type='file';input.accept='image/*';input.multiple=true;input.style.display='none';
   document.body.appendChild(input);
