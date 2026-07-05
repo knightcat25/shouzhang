@@ -153,6 +153,8 @@
             justify-content: center;
         }
         .lightbox-close:hover { background: rgba(255,255,255,0.3); }
+        .lightbox-save{position:absolute;top:20px;right:80px;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:24px;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .lightbox-save:hover{background:rgba(76,175,80,0.5)}
 
         /* Responsive - 手机端适配 */
         @media (max-width: 768px) {
@@ -639,6 +641,7 @@
     <!-- 🔍 图片预览弹窗 -->
     <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
         <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <button class="lightbox-save" id="lightboxSaveBtn" onclick="saveLightboxImage()" title="保存图片">💾</button>
         <img src="" id="lightboxImg" alt="">
     </div>
 
@@ -674,7 +677,8 @@
         if(!entry||!entry.images)return;
         openImageGallery(entry.images.map(i=>i.data),index);
     }
-    function closeLightbox() {
+    function saveLightboxImage(){var img=document.getElementById("lightboxImg");if(!img||!img.src)return;var a=document.createElement("a");a.href=img.src;a.download="手账图片_"+new Date().toISOString().slice(0,10)+".jpg";document.body.appendChild(a);a.click();document.body.removeChild(a);if(typeof AndroidBridge!=="undefined"&&AndroidBridge.saveImage){AndroidBridge.saveImage(img.src);}}
+function closeLightbox() {
         document.getElementById('lightbox').classList.remove('active');
         lightboxImages=[];lightboxIndex=0;
     }
