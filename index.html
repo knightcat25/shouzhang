@@ -22,8 +22,7 @@
         
         /* Header */
         .app-header { text-align: center; margin-bottom: 30px; padding-top: 32px; }
-        .app-header h1 { font-size: 2.2em; color: #7b5544; display: block; margin-bottom: 8px; }
-        .app-header .btn-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .app-header h1 { font-size: 2.2em; color: #7b5544; display: block; text-align: center; }
 
         /* Calendar Section */
         .calendar-card { background: #fff; border-radius: 24px; padding: 24px; box-shadow: 0 8px 32px rgba(123, 85, 68, 0.1); margin-bottom: 24px; }
@@ -421,7 +420,7 @@
 <body>
     <div class="app-container">
         <div class="app-header"><h1>📖 我的手账</h1>
-        <div class="btn-row">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:8px">
         <input type="color" id="bgColorPicker" title="更换背景色" value="#fdf6f0" onchange="changeBgColor(this.value)">
         <button class="export-btn" onclick="exportData()" title="导出数据">📤 导出数据</button>
         <button class="export-btn" onclick="importData()" title="导入数据">📥 导入数据</button>
@@ -1285,56 +1284,8 @@ function doSearch(){
 function navigateToDate(dateStr){switchTab('calendar');const d=parseDate(dateStr);currentYear=d.getFullYear();currentMonth=d.getMonth();renderCalendar();selectDate(dateStr);}
 
 // ==================== Export ====================
-// ===== 每日一句 =====
-var quotes=[
-  ['The only way to do great work is to love what you do.','Steve Jobs'],
-  ['Stay hungry, stay foolish.','Steve Jobs'],
-  ['千里之行，始于足下。','老子'],
-  ['学而不思则罔，思而不学则殆。','孔子'],
-  ['知之为知之，不知为不知，是知也。','孔子'],
-  ['天行健，君子以自强不息。','《周易》'],
-  ['The future belongs to those who believe in the beauty of their dreams.','Eleanor Roosevelt'],
-  ['生活不止眼前的苟且，还有诗和远方。','高晓松'],
-  ['世上无难事，只要肯登攀。','毛泽东'],
-  ['活着就是为了改变世界。','乔布斯'],
-  ['知识就是力量。','培根'],
-  ['读万卷书，行万里路。','董其昌'],
-  ['三人行，必有我师焉。','孔子'],
-  ['不积跬步，无以至千里。','荀子'],
-  ['己所不欲，勿施于人。','孔子'],
-];
-var questions=[
-  '太阳系中哪颗行星被称为"红色星球"？',
-  '世界上最长的河流是哪一条？',
-  '"相对论"是哪位科学家提出的？',
-  '地球上最深的海沟叫什么名字？',
-  '中国的四大发明是什么？',
-  'DNA的双螺旋结构是哪两位科学家发现的？',
-  '世界上最古老的文明是哪个？',
-  '珠穆朗玛峰的海拔高度是多少米？',
-  '"文艺复兴"起源于哪个国家？',
-  '人体最大的器官是什么？',
-  '光速大约是多少公里每秒？',
-  '恐龙灭绝发生在多少年前？',
-  '地球上最大的热带雨林叫什么？',
-  '水的化学式是什么？',
-  '谁被称为"交响乐之父"？',
-  '中国的首都在哪个城市？',
-  '"蒙娜丽莎"是谁的作品？',
-  '地球绕太阳公转一周大约需要多少天？',
-  '人类第一次登上月球是在哪一年？',
-  '太平洋有多大面积？',
-  '"四大名著"是哪四本书？',
-  'iPhone是哪家公司发明的？',
-  '世界上最硬的天然物质是什么？',
-  '中国有多少个省级行政区？',
-  '雷电是什么现象？',
-  '人类有多少对染色体？',
-  '最大的哺乳动物是什么？',
-  '"量子力学"中著名的思想实验是薛定谔的什么动物？',
-  '海王星距离太阳大约多少亿公里？',
-  '谁统一了德国，成为"铁血宰相"？',
-];
+var quotes=[["The only way to do great work is to love what you do.", "Steve Jobs"], ["Stay hungry, stay foolish.", "Steve Jobs"], ["千里之行，始于足下。", "老子"], ["学而不思则罔，思而不学则殆。", "孔子"], ["天行健，君子以自强不息。", "《周易》"], ["生活不止眼前的苟且，还有诗和远方。", "高晓松"], ["世上无难事，只要肯登攀。", "毛泽东"], ["知识就是力量。", "培根"], ["读万卷书，行万里路。", "董其昌"], ["三人行，必有我师焉。", "孔子"], ["不积跬步，无以至千里。", "荀子"], ["己所不欲，勿施于人。", "孔子"], ["温故而知新，可以为师矣。", "孔子"], ["书山有路勤为径，学海无涯苦作舟。", "韩愈"], ["天生我材必有用，千金散尽还复来。", "李白"], ["路漫漫其修远兮，吾将上下而求索。", "屈原"], ["宝剑锋从磨砺出，梅花香自苦寒来。", "《警世贤文》"], ["海纳百川，有容乃大。", "林则徐"], ["I think, therefore I am.", "Rene Descartes"], ["Be the change you wish to see in the world.", "Mahatma Gandhi"], ["Imagination is more important than knowledge.", "Albert Einstein"], ["In the middle of difficulty lies opportunity.", "Albert Einstein"], ["The unexamined life is not worth living.", "Socrates"], ["It does not matter how slowly you go as long as you do not stop.", "Confucius"], ["Everything you can imagine is real.", "Pablo Picasso"], ["Do what you can, with what you have, where you are.", "Theodore Roosevelt"], ["Happiness is not something ready-made. It comes from your own actions.", "Dalai Lama"], ["The best time to plant a tree was 20 years ago. The second best time is now.", "Chinese Proverb"], ["Believe you can and you are halfway there.", "Theodore Roosevelt"], ["天下兴亡，匹夫有责。", "顾炎武"], ["有志者，事竟成。", "《后汉书》"], ["静以修身，俭以养德。", "诸葛亮"], ["纸上得来终觉浅，绝知此事要躬行。", "陆游"], ["山重水复疑无路，柳暗花明又一村。", "陆游"], ["会当凌绝顶，一览众山小。", "杜甫"]];
+var questions=["太阳系中哪颗行星被称为红色星球？", "世界上最长的河流是哪一条？", "相对论是哪位科学家提出的？", "地球上最深的海沟叫什么名字？", "中国的四大发明是什么？", "DNA的双螺旋结构是哪两位科学家发现的？", "珠穆朗玛峰的海拔高度是多少米？", "人体最大的器官是什么？", "恐龙灭绝发生在多少年前？", "地球上最大的热带雨林叫什么？", "谁被称为交响乐之父？", "蒙娜丽莎是谁的作品？", "人类第一次登上月球是在哪一年？", "四大名著是哪四本书？", "世界上最硬的天然物质是什么？", "人类有多少对染色体？", "万有引力定律是谁发现的？", "秦始皇统一六国是在哪一年？", "地球上最大的沙漠叫什么？", "太阳主要由什么元素组成？", "金字塔主要位于哪个国家？", "进化论的提出者是谁？", "第一次世界大战爆发于哪一年？", "梵高的代表作是哪幅画？", "为什么天空是蓝色的？", "世界上最大的岛屿是哪个？", "人类发现的第一种抗生素是什么？", "太阳的年龄大约是多少亿年？", "地球上最大的动物是什么？", "诺曼底登陆发生在哪一年？", "日本最高的山是哪座？", "元素周期表是谁创制的？", "奥运会起源于哪个国家？", "人的正常体温大约是多少摄氏度？", "为什么会有四季变化？", "郑和下西洋发生在哪个朝代？", "银河系的直径大约多少光年？", "长江全长约多少公里？", "京剧中的脸谱颜色代表什么含义？", "金刚石和石墨为什么性质不同？"];
 
 function refreshQuote(){
   var q=quotes[Math.floor(Math.random()*quotes.length)];
@@ -1342,13 +1293,11 @@ function refreshQuote(){
   document.getElementById('quoteAuthor').textContent='—— '+q[1];
   var qu=questions[Math.floor(Math.random()*questions.length)];
   document.getElementById('questionText').textContent=qu;
-  localStorage.setItem('daily_quote_idx',Math.floor(Math.random()*99999));
 }
 function initDailyQuote(){
-  refreshQuote();
   var today=formatDate(new Date());
   var saved=localStorage.getItem('daily_date');
-  if(saved!==today){refreshQuote();localStorage.setItem('daily_date',today);}
+  if(saved!==today){refreshQuote();localStorage.setItem('daily_date',today);}else{refreshQuote();}
 }
 
 function exportPage(){window.print();}
@@ -1606,27 +1555,47 @@ function enhanceEntryImages(){
     var addBtn=document.createElement('button');
     addBtn.className='entry-add-img-btn';
     addBtn.textContent='📷 图片'+(imgs.length>0?' ('+imgs.length+'/10)':' (0/10)');
-    addBtn.onclick=function(){addEntryImages(entry.id);};
+    addBtn.onclick=function(){addEntryImages(String(entry.id));};
     btnRow.appendChild(addBtn);
     imgArea.appendChild(btnRow);
     var bodyEl=card.querySelector('.entry-body');
     if(bodyEl)bodyEl.appendChild(imgArea);
   });
 }
-function addImagesFromNative(entryId,images){
-  if(!images||images.length===0)return;
+function addOneImageFromNative(entryId,b64,isLast){
   var entries=getAllEntries();
   var arr=entries[currentSelectedDate];
   if(!arr)return;
   var entry=arr.find(function(en){return String(en.id)===String(entryId);});
   if(!entry)return;
   if(!entry.images)entry.images=[];
+  if(entry.images.length>=10)return;
+  entry.images.push({id:Date.now()+Math.random(),data:b64,createdAt:new Date().toISOString()});
+  if(isLast){saveAllEntries(entries);enhanceEntryImages();}
+}
+function addImagesFromNative(entryId,images){
+  entryId=String(entryId);
+  // 修复科学计数法：1.78322e+12 -> 1783220000000
+  if(entryId.indexOf('e')>0||entryId.indexOf('E')>0){
+    entryId=String(Math.round(parseFloat(entryId)));
+    if(entryId.length>15)entryId=entryId.slice(0,15);
+  }
+  if(!images||images.length===0){alert('未选择图片');return;}
+  var entries=getAllEntries();
+  var arr=entries[currentSelectedDate];
+  if(!arr){alert('请先选择日期');return;}
+  var entry=arr.find(function(en){return String(en.id).trim()===String(entryId).trim();});
+  if(!entry){alert('未找到记录(id:'+entryId+')');return;}
+  if(!entry.images)entry.images=[];
   var remaining=10-entry.images.length;
+  var added=0;
   images.slice(0,remaining).forEach(function(b64){
     entry.images.push({id:Date.now()+Math.random(),data:b64,createdAt:new Date().toISOString()});
+    added++;
   });
   saveAllEntries(entries);
   enhanceEntryImages();
+  if(added===0)alert('图片已达上限(10张)');
 }
 function addEntryImages(entryId){
   if(typeof AndroidBridge!=='undefined'&&AndroidBridge.pickImages){AndroidBridge.pickImages(entryId);return;}
